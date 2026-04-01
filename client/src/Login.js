@@ -1,8 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // ✅ ADD THIS
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const navigate = useNavigate(); // ✅ HOOK AT TOP (IMPORTANT)
 
   const handleLogin = async () => {
     const res = await fetch("http://localhost:5000/login", {
@@ -14,7 +17,13 @@ function Login() {
     });
 
     const data = await res.json();
-    alert(data.token || data.message);
+
+    if (data.token) {
+      localStorage.setItem("token", data.token); // ✅ save token
+      navigate("/dashboard"); // ✅ redirect properly
+    } else {
+      alert(data.message);
+    }
   };
 
   return (
